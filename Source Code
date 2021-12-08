@@ -1,0 +1,237 @@
+//
+// MP3
+// Levi Hohenbrink
+// Programming 1 - Dr. Estell
+// This program produces all of the seats open on a plane. The user then inputs the 
+// letter and number that corresponds to the seat that they want to sit in on the plane.
+// Once a seat is selected it is then crossed out and can no long be selected.
+// If a seat that is selected by the user does not exist the program will inform
+// the user that the seat does not exist and to pick a different seat. Once a seat that
+// exists is selected, that seat will be crossed out and another seat can be selected if 
+// the user wants to or if someone else wants to select a seat. This will keep going until
+// all the seats on the plane are full.
+//
+
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+//Function prototypes
+
+int findRowIndex(int thisRow);
+int findSeatIndex(char thisSeat);
+const int ROWS = 13;
+void displaySeatColumn(char seats[][ROWS], int column);
+void displaySeatingChart(char seats[][ROWS]);
+void initializeSeatingChart(char seats[][ROWS]);
+
+
+
+int main() {
+
+    string input;
+    int row, counter = 0;
+    char seat;
+
+    char seats[4][ROWS];
+    (void)initializeSeatingChart(seats);
+
+    while (true) {
+
+        displaySeatingChart(seats);
+
+        // Where user inputs seat letter and number
+
+        cout << "Enter a seat or Q to quit: ";
+        cin >> input;
+
+        if (input == "Q" || input == "q") break;
+
+        else {
+
+            seat = toupper(input[input.length() - 1]);
+            input.pop_back();
+            row = stoi(input);
+
+        }
+
+        if (findRowIndex(row) == -1 || findSeatIndex(seat) == -1) {
+
+            continue;
+
+        }
+
+        else if (seats[findSeatIndex(seat)][findRowIndex(row)] == ' ') {
+
+            cout << "Sorry, no such seat exists on the CRJ 200.\n";
+
+        }
+
+        else if (seats[findSeatIndex(seat)][findRowIndex(row)] == 'X') {
+
+            cout << "Sorry, this seat has already been assigned. \nPlease make another selection.\n";
+
+        }
+
+        else {
+
+            seats[findSeatIndex(seat)][findRowIndex(row)] = 'X';
+
+            counter++;
+
+        }
+
+        cout << "\n";
+
+        if (counter == (ROWS * 4 - 2)) {
+            cout << "All seats in the plane have been filled!\n\n";
+
+            break;
+
+        }
+
+    }
+
+    return 0;
+
+}
+
+
+
+// findRowIndex: given user input, returns appropriate row index into arrays.
+// @param thisRow - integer indicating row selected by the user
+// @return appropriate index into 2-D array if the specified row is valid, ERROR otherwise
+
+
+
+int findRowIndex(int thisRow) {
+
+    int rowIndex = 0;
+    rowIndex = thisRow - 1;
+
+    if (rowIndex < 0 || rowIndex > ROWS - 1) {
+
+        cout << "Sorry, no such seat exists on the CRJ 200.\n\n";
+
+        return -1;
+
+    }
+
+    return rowIndex;
+
+}
+
+
+// findSeatIndex: given user input, returns appropriate column index into seating chart array.
+// @param thisSeat - character indicating selected seat within row
+// @return appropriate index into 2-D array if the specified seat is valid, ERROR otherwise
+
+
+int findSeatIndex(char thisSeat) {
+
+    int seatIndex;
+
+    switch (thisSeat) {
+
+    case 'A': seatIndex = 3; break;
+    case 'B': seatIndex = 2; break;
+    case 'C': seatIndex = 1; break;
+    case 'D': seatIndex = 0; break;
+
+    default: cout << "Sorry, no such seat exists on the CRJ 200.\n\n"; return seatIndex = -1; break;
+
+    }
+
+    return seatIndex;
+
+}
+
+
+// displaySeatColumn: given a 2-D mapping of the seating chart in the form [columns][rows],
+// will print out a "column" of seats on one row of output (i.e., seat 'A' for all rows in the plane)
+// @param seats - reference to a 2-D character array
+// @param column - reference to which column of seats to display
+
+
+void displaySeatColumn(char seats[][ROWS], int column) {
+
+    for (int i = 0; i < ROWS; i++) {
+
+        cout << seats[column - 1][i] << " ";
+
+    }
+
+    cout << endl;
+
+}
+
+
+// displaySeatingChart: given a 2-D mapping of the seating chart on the airplane in the form [columns][rows],
+// will print out all of the columns of seats for the user to see.
+// @param seats - reference to a 2-D character array
+// no return value
+
+
+void displaySeatingChart(char seats[][ROWS]) {
+
+    int num;
+
+    displaySeatColumn(seats, 1);
+    displaySeatColumn(seats, 2);
+
+    cout << "\n";
+
+    for (int i = 0; i < ROWS; i++) {
+
+        num = (i + 1) / 10;
+
+        if (num == 0) cout << "  ";
+
+        else cout << num << " ";
+
+    }
+
+    cout << "\n";
+
+    for (int i = 0; i < ROWS; i++) cout << (i + 1) % 10 << " ";
+
+    cout << "\n\n";
+
+    displaySeatColumn(seats, 3);
+    displaySeatColumn(seats, 4);
+
+    cout << "\n";
+
+}
+
+
+// initializeSeatingChart: given a 2-D array of the correct seating chart size, initialize or reset
+// the seating chart on the airplane following the form of [column][rows].
+// @param seats - reference to a 2-D character array
+// no return value
+
+
+void initializeSeatingChart(char seats[][ROWS]) {
+
+    for (int i = 0; i < 13; i++) {
+
+        if (i < 12) seats[0][i] = 'D';
+
+        else seats[0][i] = ' ';
+
+    }
+
+    for (int i = 0; i < 13; i++) {
+
+        if (i < 12) seats[1][i] = 'C';
+
+        else seats[1][i] = ' ';
+
+    }
+
+    for (int i = 0; i < 13; i++) seats[2][i] = 'B';
+    for (int i = 0; i < 13; i++) seats[3][i] = 'A';
+
+}
